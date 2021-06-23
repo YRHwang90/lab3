@@ -9,6 +9,7 @@ output: github_document
 
 ```{r load-packages, message=FALSE}
 library(tidyverse) 
+library(ggplot2)
 ```
 
 ```{r load-data, message=FALSE}
@@ -18,34 +19,55 @@ nobel <- read_csv("data/nobel.csv")
 ## Exercises
 
 ### Exercise 1
+```{r}
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+str(nobel)
+```
+
+```{r,2}
+nobel_living<- nobel %>%
+  filter(!is.na(country),
+         gender!="org",
+         is.na(died_date))
+
+str(nobel_living)
+
+```
 
 ### Exercise 2
+%in%  if certain vector contains specific value or not 
+```{r,2-1}
+nobel_living <- nobel_living %>%
+  mutate(country_us = if_else(country == "USA", "USA", "Other")
+  ) 
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+nobel_living_science <- nobel_living %>%
+  filter(category %in% c("Physics","Medicine", "Chemistry","Economics"))
+
+View(head(nobel_living_science))
+
+ggplot(data = nobel_living_science,
+       mapping = aes(x=country_us)) +
+  geom_bar() +
+  coord_flip() +
+  facet_wrap(~category) +
+  labs(title="Nobel Plot", x="US or Not", y="frequency of ")
+
+  
+```
 
 ### Exercise 3
+```{r,6}
+nobel_living_science <-nobel_living_science %>%
+  filter(country=="USA" & born_country!="USA") %>%
+  count(born_country) %>%
+  arrange(desc(n)) 
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+nobel_living_science$country
+nobel_living_science$born_country
 
-### Exercise 4
 
-...
+str(nobel_living_science$country)
+```
 
-### Exercise 5
 
-...
-
-### Exercise 6
-
-...
