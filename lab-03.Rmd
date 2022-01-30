@@ -1,7 +1,7 @@
 ---
 title: "Lab 03 - Nobel laureates"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Yoo RI "
+date: "30th Jan"
 output: github_document
 ---
 
@@ -13,7 +13,7 @@ library(ggplot2)
 ```
 
 ```{r load-data, message=FALSE}
-nobel <- read_csv("data/nobel.csv")
+nobel <- read.csv("data/nobel.csv")
 ```
 
 ## Exercises
@@ -23,7 +23,7 @@ nobel <- read_csv("data/nobel.csv")
 
 str(nobel)
 ```
-
+26 variable, each person 
 ```{r,2}
 nobel_living<- nobel %>%
   filter(!is.na(country),
@@ -34,7 +34,7 @@ str(nobel_living)
 
 ```
 
-### Exercise 2
+### Exercise 2 , 3
 %in%  if certain vector contains specific value or not 
 ```{r,2-1}
 nobel_living <- nobel_living %>%
@@ -44,24 +44,46 @@ nobel_living <- nobel_living %>%
 nobel_living_science <- nobel_living %>%
   filter(category %in% c("Physics","Medicine", "Chemistry","Economics"))
 
-View(head(nobel_living_science))
+print(head(nobel_living_science,30))
 
 ggplot(data = nobel_living_science,
        mapping = aes(x=country_us)) +
   geom_bar() +
   coord_flip() +
   facet_wrap(~category) +
-  labs(title="Nobel Plot", x="US or Not", y="frequency of ")
+  labs(title="Nobel Plot", x="US or Not", y="frequency ")
 
   
 ```
 
-### Exercise 3
+### Exercise 4,5,6
 ```{r,6}
-nobel_living_science <-nobel_living_science %>%
-  filter(country=="USA" & born_country!="USA") %>%
+#4
+nobel_living_science <- nobel_living_science %>%
+  dplyr::mutate(born_country_us = dplyr::case_when(
+    born_country == "USA" ~ "USA",
+    born_country!="USA" ~ "other",
+    TRUE ~ NA_character_))
+
+table(nobel_living_science$born_country_us)
+
+#5
+
+ggplot(data = nobel_living_science,
+       mapping = aes(x=country_us, fill=born_country_us)) +
+  geom_bar( alpha=0.5) +
+  coord_flip() +
+  facet_wrap(~category) +
+  labs(title="Nobel Plot", x="US or Not", y="frequency ")
+
+
+ #6
+nobel_living_science2 <- nobel_living_science %>%
+  dplyr::filter( country =="USA",
+         born_country!="USA") %>%
   count(born_country) %>%
-  arrange(desc(n)) 
+  arrange(desc(n)) %>%
+  print()
 
 nobel_living_science$country
 nobel_living_science$born_country
@@ -70,4 +92,6 @@ nobel_living_science$born_country
 str(nobel_living_science$country)
 ```
 
-
+4. 105
+5. I cannot tell. More sound data and more sound analysis should be used to address that claim. (if that difference is significant or not) however, I can see that it can  vary across the field. 
+6. German, UK. 
